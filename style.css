@@ -27,22 +27,22 @@ body {
 }
 
 .items-panel .item {
-  width: 80px;
+  width: 160px; /* увеличено в 2 раза */
   cursor: grab;
   transition: width 0.3s ease;
 }
 
-/* На маленьких экранах (телефонах) увеличиваем иконки */
+/* На маленьких экранах (телефонах) можно даже чуть больше */
 @media (max-width: 600px) {
   .items-panel .item {
-    width: 120px;
+    width: 180px;
   }
 }
 
-/* На больших экранах — немного меньше, чтобы было аккуратно */
+/* На очень больших экранах можно чуть уменьшить */
 @media (min-width: 1200px) {
   .items-panel .item {
-    width: 70px;
+    width: 140px;
   }
 }
 
