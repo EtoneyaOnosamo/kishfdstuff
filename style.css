@@ -26,18 +26,9 @@ body {
   overflow-y: auto;
 }
 
-.icon {
-  width: 160px;
+.items-panel .item {
+  width: 80px;
   cursor: grab;
-  transition: width 0.3s ease;
-  flex-shrink: 0;
-}
-
-
-@media (max-width: 600px) {
-  .icon {
-    width: 180px;
-  }
 }
 
 .zoom-wrapper {
