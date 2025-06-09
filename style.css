@@ -40,11 +40,6 @@ body {
   }
 }
 
-.items-panel .item {
-  width: 200px;
-  cursor: grab;
-}
-
 .zoom-wrapper {
   overflow: hidden;
   touch-action: none;
