@@ -1,69 +1,61 @@
 const items = document.querySelectorAll('.item');
-
-items.forEach(item => {
-  // Мышь
-  item.addEventListener('dragstart', dragStart);
-  item.addEventListener('dragend', dragEnd);
-
-  // Сенсорные события
-  item.addEventListener('touchstart', touchStart, { passive: false });
-  item.addEventListener('touchmove', touchMove, { passive: false });
-  item.addEventListener('touchend', touchEnd);
-});
-
 let offsetX = 0;
 let offsetY = 0;
 let draggedItem = null;
 
-function dragStart(e) {
-  offsetX = e.offsetX;
-  offsetY = e.offsetY;
-  e.dataTransfer.setData('text/plain', e.target.id);
-}
+// Для мыши
+items.forEach(item => {
+  item.addEventListener('mousedown', e => {
+    draggedItem = item;
+    const rect = item.getBoundingClientRect();
+    offsetX = e.clientX - rect.left;
+    offsetY = e.clientY - rect.top;
+  });
+});
 
-function dragEnd(e) {
-  const item = document.getElementById(e.target.id);
-  const container = document.querySelector('.container');
+document.addEventListener('mousemove', e => {
+  if (draggedItem) {
+    const container = document.querySelector('.container');
+    const rect = container.getBoundingClientRect();
 
-  const rect = container.getBoundingClientRect();
-  const x = e.clientX - rect.left - offsetX;
-  const y = e.clientY - rect.top - offsetY;
+    let x = e.clientX - rect.left - offsetX;
+    let y = e.clientY - rect.top - offsetY;
 
-  item.style.left = `${x}px`;
-  item.style.top = `${y}px`;
-}
+    draggedItem.style.left = `${x}px`;
+    draggedItem.style.top = `${y}px`;
+  }
+});
 
-function touchStart(e) {
-  e.preventDefault();
-
-  draggedItem = e.target;
-
-  const touch = e.touches[0];
-  const rect = draggedItem.getBoundingClientRect();
-
-  offsetX = touch.clientX - rect.left;
-  offsetY = touch.clientY - rect.top;
-}
-
-function touchMove(e) {
-  e.preventDefault();
-
-  if (!draggedItem) return;
-
-  const touch = e.touches[0];
-  const container = document.querySelector('.container');
-  const rect = container.getBoundingClientRect();
-
-  let x = touch.clientX - rect.left - offsetX;
-  let y = touch.clientY - rect.top - offsetY;
-
-  x = Math.max(0, Math.min(x, rect.width - draggedItem.offsetWidth));
-  y = Math.max(0, Math.min(y, rect.height - draggedItem.offsetHeight));
-
-  draggedItem.style.left = `${x}px`;
-  draggedItem.style.top = `${y}px`;
-}
-
-function touchEnd(e) {
+document.addEventListener('mouseup', () => {
   draggedItem = null;
-}
+});
+
+// Для телефона
+items.forEach(item => {
+  item.addEventListener('touchstart', e => {
+    draggedItem = item;
+    const touch = e.touches[0];
+    const rect = item.getBoundingClientRect();
+    offsetX = touch.clientX - rect.left;
+    offsetY = touch.clientY - rect.top;
+  }, { passive: false });
+
+  item.addEventListener('touchmove', e => {
+    e.preventDefault();
+    if (draggedItem) {
+      const touch = e.touches[0];
+      const container = document.querySelector('.container');
+      const rect = container.getBoundingClientRect();
+
+      let x = touch.clientX - rect.left - offsetX;
+      let y = touch.clientY - rect.top - offsetY;
+
+      draggedItem.style.left = `${x}px`;
+      draggedItem.style.top = `${y}px`;
+    }
+  }, { passive: false });
+
+  item.addEventListener('touchend', () => {
+    draggedItem = null;
+  });
+});
