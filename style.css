@@ -22,26 +22,24 @@ body {
 .items-panel {
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  max-height: 90vh;
+  gap: 10px;
   overflow-y: auto;
   align-items: center;
+  padding: 10px;
 }
 
-/* 🔹 Стили для иконок (предметов в панели) */
+/* Иконки одежды */
 .icon {
-  width: 160px;
+  width: 100px;
   cursor: grab;
-  transition: width 0.3s ease;
-  flex-shrink: 0;
+  transition: transform 0.2s ease;
 }
 
-@media (max-width: 600px) {
-  .icon {
-    width: 180px;
-  }
+.icon:active {
+  transform: scale(1.1);
 }
 
+/* Кукла и одетые вещи */
 .zoom-wrapper {
   overflow: hidden;
   display: flex;
@@ -52,8 +50,8 @@ body {
 }
 
 .container {
-  width: 400px;
-  height: 600px;
+  width: 500px;
+  height: 750px;
   position: relative;
   transform-origin: center center;
   touch-action: none;
@@ -68,7 +66,7 @@ body {
   z-index: 0;
 }
 
-/* 🔹 Стили для надетых вещей */
+/* Надетые вещи */
 .container .item {
   position: absolute;
   top: 0;
@@ -76,4 +74,16 @@ body {
   width: 100%;
   z-index: 1;
   touch-action: none;
+}
+
+/* Адаптация для мобильных устройств */
+@media (max-width: 768px) {
+  .container {
+    width: 300px;
+    height: 450px;
+  }
+
+  .icon {
+    width: 80px;
+  }
 }
