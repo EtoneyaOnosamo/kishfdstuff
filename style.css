@@ -37,3 +37,30 @@ body {
   touch-action: none;
   user-select: none;
 }
+.wrapper {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.items-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  background: #eee;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.items-panel .item {
+  position: static; /* убираем absolute в панели */
+  width: 100px;
+  height: auto;
+  cursor: grab;
+}
+
+.container .item {
+  position: absolute;
+  width: 100%;
+}
