@@ -1,42 +1,17 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
   background: #f8f8f8;
+  margin: 0;
+  padding: 0;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  margin: 0;
 }
 
-.container {
-  position: relative;
-  width: 400px;
-  height: 600px;
-  touch-action: none;
-  background: white;
-  border: 2px solid #ccc;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-
-.base {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 0;
-  pointer-events: none;
-  user-select: none;
-}
-
-.item {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 1;
-  cursor: grab;
-  touch-action: none;
-  user-select: none;
-}
 .wrapper {
   display: flex;
   gap: 20px;
@@ -54,13 +29,42 @@ body {
 }
 
 .items-panel .item {
-  position: static; /* убираем absolute в панели */
-  width: 100px;
+  width: 80px;
   height: auto;
   cursor: grab;
+  position: relative;
+  touch-action: none;
+  user-select: none;
+}
+
+.container {
+  position: relative;
+  width: 90vw;
+  max-width: 400px;
+  aspect-ratio: 2 / 3;
+  background: white;
+  border: 2px solid #ccc;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  overflow: hidden;
+  touch-action: none;
+}
+
+.base {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 0;
+  pointer-events: none;
 }
 
 .container .item {
   position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
+  z-index: 1;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
 }
