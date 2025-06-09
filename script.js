@@ -1,60 +1,90 @@
-const items = document.querySelectorAll('.item');
+let draggedItem = null;
 let offsetX = 0;
 let offsetY = 0;
-let draggedItem = null;
 
-// Мышь
-items.forEach(item => {
-  item.addEventListener('mousedown', e => {
-    draggedItem = item;
-    offsetX = item.offsetWidth / 2;
-    offsetY = item.offsetHeight / 2;
+function isDuplicate(id) {
+  return document.querySelector(`.container .item[id="${id}"]`) !== null;
+}
+
+// Удаление предмета по клику или тапу
+function enableRemoval(item) {
+  item.addEventListener('click', e => {
+    e.stopPropagation();
+    item.remove();
   });
-});
 
-document.addEventListener('mousemove', e => {
-  if (draggedItem) {
-    moveItem(e.clientX, e.clientY);
-  }
-});
-
-document.addEventListener('mouseup', () => {
-  draggedItem = null;
-});
-
-// Сенсор
-items.forEach(item => {
   item.addEventListener('touchstart', e => {
-    draggedItem = item;
-    offsetX = item.offsetWidth / 2;
-    offsetY = item.offsetHeight / 2;
-  }, { passive: false });
+    e.stopPropagation();
+    item.remove();
+  }, { passive: true });
+}
 
-  item.addEventListener('touchmove', e => {
+function initDrag(item) {
+  item.addEventListener('mousedown', e => {
     e.preventDefault();
-    if (draggedItem) {
-      const touch = e.touches[0];
-      moveItem(touch.clientX, touch.clientY);
-    }
-  }, { passive: false });
-
-  item.addEventListener('touchend', () => {
-    draggedItem = null;
+    startDrag(item, e.clientX, e.clientY);
   });
-});
 
-// Функция перемещения
-function moveItem(clientX, clientY) {
+  item.addEventListener('touchstart', e => {
+    if (e.touches.length > 1) return;
+    const touch = e.touches[0];
+    startDrag(item, touch.clientX, touch.clientY);
+  }, { passive: false });
+}
+
+function startDrag(originalItem, clientX, clientY) {
+  const fromPanel = !originalItem.closest('.container');
+  const id = originalItem.id;
+
+  // Если из панели и уже надето — не добавляем
+  if (fromPanel && isDuplicate(id)) return;
+
+  if (fromPanel) {
+    draggedItem = originalItem.cloneNode(true);
+    draggedItem.id = id;
+    draggedItem.style.position = 'absolute';
+    draggedItem.classList.add('item');
+
+    document.querySelector('.container').appendChild(draggedItem);
+    enableRemoval(draggedItem);
+    initDrag(draggedItem);
+  } else {
+    draggedItem = originalItem;
+  }
+
+  const rect = draggedItem.getBoundingClientRect();
+  offsetX = clientX - rect.left;
+  offsetY = clientY - rect.top;
+}
+
+function moveDrag(clientX, clientY) {
+  if (!draggedItem) return;
+
   const container = document.querySelector('.container');
   const rect = container.getBoundingClientRect();
 
   let x = clientX - rect.left - offsetX;
   let y = clientY - rect.top - offsetY;
 
-  // Ограничения
-  x = Math.max(0, Math.min(x, rect.width - draggedItem.offsetWidth));
-  y = Math.max(0, Math.min(y, rect.height - draggedItem.offsetHeight));
-
   draggedItem.style.left = `${x}px`;
   draggedItem.style.top = `${y}px`;
 }
+
+function endDrag() {
+  draggedItem = null;
+}
+
+document.addEventListener('mousemove', e => moveDrag(e.clientX, e.clientY));
+document.addEventListener('mouseup', endDrag);
+
+document.addEventListener('touchmove', e => {
+  if (draggedItem) {
+    const touch = e.touches[0];
+    moveDrag(touch.clientX, touch.clientY);
+  }
+}, { passive: false });
+
+document.addEventListener('touchend', endDrag);
+
+// Запуск
+document.querySelectorAll('.items-panel .item').forEach(initDrag);
