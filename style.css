@@ -1,60 +1,68 @@
-const items = document.querySelectorAll('.item');
-let offsetX = 0;
-let offsetY = 0;
-let draggedItem = null;
+body {
+  margin: 0;
+  background: #f8f8f8;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  font-family: sans-serif;
+}
 
-// Мышь
-items.forEach(item => {
-  item.addEventListener('mousedown', e => {
-    draggedItem = item;
-    offsetX = item.offsetWidth / 2;
-    offsetY = item.offsetHeight / 2;
-  });
-});
+.main-wrapper {
+  display: flex;
+  flex-direction: row; /* Важно: чтобы панель была сбоку */
+  gap: 20px;
+  max-width: 100vw;
+  max-height: 100vh;
+  align-items: center;
+}
 
-document.addEventListener('mousemove', e => {
-  if (draggedItem) {
-    moveItem(e.clientX, e.clientY);
-  }
-});
+.items-panel {
+  display: flex;
+  flex-direction: column; /* вертикально */
+  gap: 10px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
 
-document.addEventListener('mouseup', () => {
-  draggedItem = null;
-});
+.items-panel .item {
+  width: 80px;
+  cursor: grab;
+}
 
-// Сенсор
-items.forEach(item => {
-  item.addEventListener('touchstart', e => {
-    draggedItem = item;
-    offsetX = item.offsetWidth / 2;
-    offsetY = item.offsetHeight / 2;
-  }, { passive: false });
+.zoom-wrapper {
+  overflow: hidden;
+  touch-action: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 90vw;
+  max-height: 100vh;
+}
 
-  item.addEventListener('touchmove', e => {
-    e.preventDefault();
-    if (draggedItem) {
-      const touch = e.touches[0];
-      moveItem(touch.clientX, touch.clientY);
-    }
-  }, { passive: false });
+.container {
+  width: 400px;
+  height: 600px;
+  position: relative;
+  transform-origin: center center;
+  touch-action: none;
+}
 
-  item.addEventListener('touchend', () => {
-    draggedItem = null;
-  });
-});
+.base {
+  width: 100%;
+  height: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+}
 
-// Функция перемещения
-function moveItem(clientX, clientY) {
-  const container = document.querySelector('.container');
-  const rect = container.getBoundingClientRect();
-
-  let x = clientX - rect.left - offsetX;
-  let y = clientY - rect.top - offsetY;
-
-  // Ограничения
-  x = Math.max(0, Math.min(x, rect.width - draggedItem.offsetWidth));
-  y = Math.max(0, Math.min(y, rect.height - draggedItem.offsetHeight));
-
-  draggedItem.style.left = `${x}px`;
-  draggedItem.style.top = `${y}px`;
+.container .item {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1;
+  touch-action: none;
 }
