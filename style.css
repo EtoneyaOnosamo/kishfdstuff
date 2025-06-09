@@ -1,96 +1,60 @@
-body {
-  margin: 0;
-  background: #f8f8f8;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-  font-family: sans-serif;
-}
+const items = document.querySelectorAll('.item');
+let offsetX = 0;
+let offsetY = 0;
+let draggedItem = null;
 
-.main-wrapper {
-  display: flex;
-  flex-direction: row;
-  gap: 20px;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-}
+// Мышь
+items.forEach(item => {
+  item.addEventListener('mousedown', e => {
+    draggedItem = item;
+    offsetX = item.offsetWidth / 2;
+    offsetY = item.offsetHeight / 2;
+  });
+});
 
-/* Панель с предметами */
-.items-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 10px;
-  overflow-y: auto;
-  align-items: center;
-}
-
-/* Иконки предметов */
-.icon {
-  width: 100px;
-  cursor: grab;
-  transition: transform 0.2s ease;
-}
-
-.icon:active {
-  transform: scale(1.1);
-}
-
-/* Область с куклой */
-.zoom-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.container {
-  width: 400px;
-  height: 600px;
-  position: relative;
-}
-
-.base {
-  width: 100%;
-  height: auto;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 0;
-}
-
-/* Надетые вещи */
-.container .item {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 1;
-  touch-action: none;
-}
-
-/* Адаптация под телефон */
-@media (max-width: 768px) {
-  .main-wrapper {
-    flex-direction: column;
+document.addEventListener('mousemove', e => {
+  if (draggedItem) {
+    moveItem(e.clientX, e.clientY);
   }
+});
 
-  .items-panel {
-    flex-direction: row;
-    flex-wrap: wrap;
-    max-height: 30vh;
-    overflow-x: auto;
-    justify-content: center;
-  }
+document.addEventListener('mouseup', () => {
+  draggedItem = null;
+});
 
-  .icon {
-    width: 80px;
-  }
+// Сенсор
+items.forEach(item => {
+  item.addEventListener('touchstart', e => {
+    draggedItem = item;
+    offsetX = item.offsetWidth / 2;
+    offsetY = item.offsetHeight / 2;
+  }, { passive: false });
 
-  .container {
-    width: 300px;
-    height: 450px;
-  }
+  item.addEventListener('touchmove', e => {
+    e.preventDefault();
+    if (draggedItem) {
+      const touch = e.touches[0];
+      moveItem(touch.clientX, touch.clientY);
+    }
+  }, { passive: false });
+
+  item.addEventListener('touchend', () => {
+    draggedItem = null;
+  });
+});
+
+// Функция перемещения
+function moveItem(clientX, clientY) {
+  const container = document.querySelector('.container');
+  const rect = container.getBoundingClientRect();
+
+  let x = clientX - rect.left - offsetX;
+  let y = clientY - rect.top - offsetY;
+
+  // Ограничения
+  x = Math.max(0, Math.min(x, rect.width - draggedItem.offsetWidth));
+  y = Math.max(0, Math.min(y, rect.height - draggedItem.offsetHeight));
+
+  draggedItem.style.left = `${x}px`;
+  draggedItem.style.top = `${y}px`;
 }
