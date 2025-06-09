@@ -12,6 +12,9 @@ body {
   width: 400px;
   height: 600px;
   touch-action: none;
+  background: white;
+  border: 2px solid #ccc;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
 .base {
@@ -20,8 +23,8 @@ body {
   left: 0;
   width: 100%;
   z-index: 0;
-  user-select: none;
   pointer-events: none;
+  user-select: none;
 }
 
 .item {
@@ -29,8 +32,8 @@ body {
   top: 0;
   left: 0;
   width: 100%;
-  cursor: grab;
   z-index: 1;
+  cursor: grab;
   touch-action: none;
   user-select: none;
 }
