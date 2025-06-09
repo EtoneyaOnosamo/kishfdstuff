@@ -11,7 +11,7 @@ body {
 
 .main-wrapper {
   display: flex;
-  flex-direction: row; /* панель сбоку */
+  flex-direction: row;
   gap: 20px;
   max-width: 100vw;
   max-height: 100vh;
@@ -20,35 +20,29 @@ body {
 
 .items-panel {
   display: flex;
-  flex-direction: column; /* вертикально */
-  gap: 10px;
+  flex-direction: column;
+  gap: 15px;
   max-height: 90vh;
   overflow-y: auto;
+  align-items: center;
 }
 
 .items-panel .item {
-  width: 160px; /* увеличено в 2 раза */
+  width: 160px; /* увеличенные иконки */
   cursor: grab;
   transition: width 0.3s ease;
+  flex-shrink: 0;
 }
 
-/* На маленьких экранах (телефонах) можно даже чуть больше */
+/* Адаптация под маленькие экраны */
 @media (max-width: 600px) {
   .items-panel .item {
     width: 180px;
   }
 }
 
-/* На очень больших экранах можно чуть уменьшить */
-@media (min-width: 1200px) {
-  .items-panel .item {
-    width: 140px;
-  }
-}
-
 .zoom-wrapper {
   overflow: hidden;
-  touch-action: none;
   display: flex;
   justify-content: center;
   align-items: center;
