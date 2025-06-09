@@ -27,7 +27,7 @@ body {
 }
 
 .items-panel .item {
-  width: 20%;
+  width: 120px;
   cursor: grab;
 }
 
