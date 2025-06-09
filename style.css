@@ -11,7 +11,7 @@ body {
   position: relative;
   width: 400px;
   height: 600px;
-  touch-action: none; /* важное для мобилки */
+  touch-action: none;
 }
 
 .base {
@@ -31,6 +31,6 @@ body {
   width: 100%;
   cursor: grab;
   z-index: 1;
-  touch-action: none; /* отключаем системные жесты на мобилках */
-  user-select: none;  /* запрет выделения */
+  touch-action: none;
+  user-select: none;
 }
