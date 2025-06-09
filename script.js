@@ -2,19 +2,23 @@ let draggedItem = null;
 let offsetX = 0;
 let offsetY = 0;
 
-// Проверка: есть ли уже такой id в контейнере?
 function isDuplicate(id) {
   return document.querySelector(`.container .item[id="${id}"]`) !== null;
 }
 
-// Удаление по клику (для предметов в контейнере)
+// Удаление предмета по клику или тапу
 function enableRemoval(item) {
-  item.addEventListener('click', () => {
+  item.addEventListener('click', e => {
+    e.stopPropagation();
     item.remove();
   });
+
+  item.addEventListener('touchstart', e => {
+    e.stopPropagation();
+    item.remove();
+  }, { passive: true });
 }
 
-// Запуск перетаскивания
 function initDrag(item) {
   item.addEventListener('mousedown', e => {
     e.preventDefault();
@@ -22,27 +26,28 @@ function initDrag(item) {
   });
 
   item.addEventListener('touchstart', e => {
-    e.preventDefault();
+    if (e.touches.length > 1) return;
     const touch = e.touches[0];
     startDrag(item, touch.clientX, touch.clientY);
   }, { passive: false });
 }
 
 function startDrag(originalItem, clientX, clientY) {
-  // Клонируем из панели
-  if (!originalItem.closest('.container')) {
-    const id = originalItem.id;
+  const fromPanel = !originalItem.closest('.container');
+  const id = originalItem.id;
 
-    if (isDuplicate(id)) return; // запрет на дубли
+  // Если из панели и уже надето — не добавляем
+  if (fromPanel && isDuplicate(id)) return;
 
+  if (fromPanel) {
     draggedItem = originalItem.cloneNode(true);
+    draggedItem.id = id;
     draggedItem.style.position = 'absolute';
     draggedItem.classList.add('item');
-    draggedItem.id = id;
 
     document.querySelector('.container').appendChild(draggedItem);
-    initDrag(draggedItem);
     enableRemoval(draggedItem);
+    initDrag(draggedItem);
   } else {
     draggedItem = originalItem;
   }
@@ -69,7 +74,6 @@ function endDrag() {
   draggedItem = null;
 }
 
-// Слушатели движения
 document.addEventListener('mousemove', e => moveDrag(e.clientX, e.clientY));
 document.addEventListener('mouseup', endDrag);
 
@@ -82,5 +86,5 @@ document.addEventListener('touchmove', e => {
 
 document.addEventListener('touchend', endDrag);
 
-// Инициализация начальных предметов
+// Запуск
 document.querySelectorAll('.items-panel .item').forEach(initDrag);
