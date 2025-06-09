@@ -18,6 +18,7 @@ body {
   align-items: center;
 }
 
+/* Панель с иконками */
 .items-panel {
   display: flex;
   flex-direction: column;
@@ -27,16 +28,16 @@ body {
   align-items: center;
 }
 
-.items-panel .item {
-  width: 160px; /* увеличенные иконки */
+/* 🔹 Стили для иконок (предметов в панели) */
+.icon {
+  width: 160px;
   cursor: grab;
   transition: width 0.3s ease;
   flex-shrink: 0;
 }
 
-/* Адаптация под маленькие экраны */
 @media (max-width: 600px) {
-  .items-panel .item {
+  .icon {
     width: 180px;
   }
 }
@@ -67,6 +68,7 @@ body {
   z-index: 0;
 }
 
+/* 🔹 Стили для надетых вещей */
 .container .item {
   position: absolute;
   top: 0;
