@@ -40,18 +40,17 @@ function startDrag(originalItem, clientX, clientY) {
   if (fromPanel && isDuplicate(id)) return;
 
   if (fromPanel) {
-  draggedItem = originalItem.cloneNode(true);
-  draggedItem.id = id;
-  draggedItem.style.position = 'absolute';
-  draggedItem.classList.add('item');
+    draggedItem = originalItem.cloneNode(true);
+    draggedItem.id = id;
+    draggedItem.style.position = 'absolute';
+    draggedItem.classList.add('item');
 
-  // Используем полную версию картинки
-  draggedItem.src = originalItem.dataset.full;
-
-  document.querySelector('.container').appendChild(draggedItem);
-  enableRemoval(draggedItem);
-  initDrag(draggedItem);
-}
+    document.querySelector('.container').appendChild(draggedItem);
+    enableRemoval(draggedItem);
+    initDrag(draggedItem);
+  } else {
+    draggedItem = originalItem;
+  }
 
   const rect = draggedItem.getBoundingClientRect();
   offsetX = clientX - rect.left;
