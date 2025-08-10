@@ -1,55 +1,53 @@
+const LAYER_ORDER = ['tattoo', 'tattoo2', 'dick', 'undies', 'garter', 'socks', 'shoes', 'pants', 'shirt', 'makeup', 'beard', 'hand', 'hair', 'smile'];
+
 let draggedItem = null;
 let offsetX = 0;
 let offsetY = 0;
 
-function isDuplicate(id) {
-  return document.querySelector(`.container .item[id="${id}"]`) !== null;
+function isDuplicate(layer) {
+  return document.querySelector(`.container .item[data-layer="${layer}"]`) !== null;
 }
 
-// Удаление предмета по клику или тапу
 function enableRemoval(item) {
   item.addEventListener('click', e => {
     e.stopPropagation();
     item.remove();
   });
-
   item.addEventListener('touchstart', e => {
     e.stopPropagation();
     item.remove();
   }, { passive: true });
 }
 
-function initDrag(item) {
-  item.addEventListener('mousedown', e => {
+function initDrag(preview) {
+  preview.addEventListener('mousedown', e => {
     e.preventDefault();
-    startDrag(item, e.clientX, e.clientY);
+    startDrag(preview, e.clientX, e.clientY);
   });
-
-  item.addEventListener('touchstart', e => {
+  preview.addEventListener('touchstart', e => {
     if (e.touches.length > 1) return;
-    const touch = e.touches[0];
-    startDrag(item, touch.clientX, touch.clientY);
+    startDrag(preview, e.touches[0].clientX, e.touches[0].clientY);
   }, { passive: false });
 }
 
-function startDrag(originalItem, clientX, clientY) {
-  const fromPanel = !originalItem.closest('.container');
-  const id = originalItem.id;
+function startDrag(preview, clientX, clientY) {
+  const fromPanel = preview.classList.contains('item-preview');
+  const layer = preview.dataset.layer;
 
-  // Если из панели и уже надето — не добавляем
-  if (fromPanel && isDuplicate(id)) return;
+  if (fromPanel && isDuplicate(layer)) return;
 
   if (fromPanel) {
-    draggedItem = originalItem.cloneNode(true);
-    draggedItem.id = id;
-    draggedItem.style.position = 'absolute';
-    draggedItem.classList.add('item');
+    draggedItem = new Image();
+    draggedItem.src = preview.dataset.full;
+    draggedItem.className = 'item';
+    draggedItem.dataset.layer = layer;
 
     document.querySelector('.container').appendChild(draggedItem);
+    reorderLayers();
     enableRemoval(draggedItem);
     initDrag(draggedItem);
   } else {
-    draggedItem = originalItem;
+    draggedItem = preview;
   }
 
   const rect = draggedItem.getBoundingClientRect();
@@ -74,17 +72,42 @@ function endDrag() {
   draggedItem = null;
 }
 
+function reorderLayers() {
+  const items = Array.from(document.querySelectorAll('.container .item'));
+
+  items.sort((a, b) => {
+    return LAYER_ORDER.indexOf(a.dataset.layer) - LAYER_ORDER.indexOf(b.dataset.layer);
+  });
+
+  items.forEach((el, i) => {
+    el.style.zIndex = 10 + i;
+  });
+}
+
 document.addEventListener('mousemove', e => moveDrag(e.clientX, e.clientY));
 document.addEventListener('mouseup', endDrag);
-
 document.addEventListener('touchmove', e => {
-  if (draggedItem) {
-    const touch = e.touches[0];
-    moveDrag(touch.clientX, touch.clientY);
-  }
+  if (draggedItem) moveDrag(e.touches[0].clientX, e.touches[0].clientY);
 }, { passive: false });
-
 document.addEventListener('touchend', endDrag);
 
-// Запуск
-document.querySelectorAll('.items-panel .item').forEach(initDrag);
+document.querySelectorAll('.item-preview').forEach(initDrag);
+
+// Зоны для снятия одежды
+document.querySelectorAll('.clear-zone').forEach(zone => {
+  zone.addEventListener('click', () => {
+    const zoneName = zone.dataset.zone;
+    const layerMap = {
+      head: ['hair', 'makeup', 'smile', 'beard'],
+      torso: ['shirt', 'jacket', 'tattoo', 'tattoo2', 'hand', 'garter'],
+      legs: ['pants', 'undies', 'socks', 'dick'],
+      feet: ['shoes']
+    };
+    const toRemove = layerMap[zoneName];
+    document.querySelectorAll('.container .item').forEach(item => {
+      if (toRemove.includes(item.dataset.layer)) {
+        item.remove();
+      }
+    });
+  });
+});
