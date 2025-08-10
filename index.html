@@ -7,17 +7,46 @@
 </head>
 <body>
   <div class="main-wrapper">
-  <div class="items-panel">
-      <img src="img/Волосы_длинные.png" class="item" id="hair" draggable="false">
-      <img src="img/штаны_камо.png" class="item" id="pants" draggable="false">
-      <img src="img/рамонес_синяя.png" class="item" id="shirt" draggable="false">
+    <div class="items-panel">
+      <img src="img/волосы_принцесса_preview.png" data-full="img/волосы_принцесса.png" class="item-preview" data-layer="hair" draggable="false">      
+      <img src="img/волосы_длинные_preview.png" data-full="img/волосы_длинные.png" class="item-preview" data-layer="hair" draggable="false">
+      <img src="img/иглы_preview.png" data-full="img/иглы.png" class="item-preview" data-layer="hair" draggable="false">
+      <img src="img/лицо_preview.png" data-full="img/борода.png" class="item-preview" data-layer="beard" draggable="false">
+      <img src="img/лицо_preview.png" data-full="img/грим.png" class="item-preview" data-layer="makeup" draggable="false">
+      <img src="img/лицо_preview.png" data-full="img/зубы.png" class="item-preview" data-layer="smile" draggable="false">
+      <img src="img/футболка_preview.png" data-full="img/футболка.png" class="item-preview" data-layer="shirt" draggable="false">
+      <img src="img/рамонес_синяя_preview.png" data-full="img/рамонес_синяя.png" class="item-preview" data-layer="shirt" draggable="false">      
+      <img src="img/полоска_preview.png" data-full="img/полоска.png" class="item-preview" data-layer="shirt" draggable="false">	
+      <img src="img/хуй_preview.png" data-full="img/сбруя.png" class="item-preview" data-layer="garter" draggable="false">	
+      <img src="img/рука_preview.png" data-full="img/пиво.png" class="item-preview" data-layer="hand" draggable="false">				
+      <img src="img/рука_preview.png" data-full="img/микро.png" class="item-preview" data-layer="hand" draggable="false">		      
+      <img src="img/рука_preview.png" data-full="img/фея.png" class="item-preview" data-layer="hand" draggable="false">		      
+      <img src="img/штаны_камо_preview.png" data-full="img/штаны_камо.png" class="item-preview" data-layer="pants" draggable="false">
+      <img src="img/джинсы_preview.png" data-full="img/джинсы.png" class="item-preview" data-layer="pants" draggable="false">
+      <img src="img/кожа_preview.png" data-full="img/кожа.png" class="item-preview" data-layer="pants" draggable="false"> 
+      <img src="img/трусы_preview.png" data-full="img/трусы.png" class="item-preview" data-layer="undies" draggable="false">
+      <img src="img/хуй_preview.png" data-full="img/чулки.png" class="item-preview" data-layer="socks" draggable="false">
+      <img src="img/кеды_preview.png" data-full="img/кеды.png" class="item-preview" data-layer="shoes" draggable="false">
+      <img src="img/хуй_preview.png" data-full="img/хуй.png" class="item-preview" data-layer="dick" draggable="false">
+      <img src="img/боты_preview.png" data-full="img/боты.png" class="item-preview" data-layer="shoes" draggable="false">
+      <img src="img/тату_preview.png" data-full="img/анархия_А.png" class="item-preview" data-layer="tattoo" draggable="false">
+      <img src="img/тату_preview.png" data-full="img/анархия_рука.png" class="item-preview" data-layer="tattoo2" draggable="false">      
+
     </div>
+
     <div class="zoom-wrapper">
-    <div class="container">
-      <img src="img/Фигурка.png" class="base" alt="Фигурка">
+      <div class="container">
+        <img src="img/фигурка.png" class="base" alt="Фигурка">
+
+        <!-- Интерактивные зоны -->
+        <div class="clear-zone head-zone" data-zone="head"></div>
+        <div class="clear-zone torso-zone" data-zone="torso"></div>
+        <div class="clear-zone legs-zone" data-zone="legs"></div>
+        <div class="clear-zone feet-zone" data-zone="feet"></div>
+      </div>
     </div>
   </div>
-</div>
+
   <script src="script.js"></script>
 </body>
 </html>
