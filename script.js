@@ -1,4 +1,4 @@
-const LAYER_ORDER = ['tattoo', 'tattoo2', 'dick', 'undies', 'garter', 'socks', 'shoes', 'pants', 'shirt', 'makeup', 'beard', 'hand', 'hair', 'smile'];
+const LAYER_ORDER = ['tattoo', 'tattoo2', 'dick', 'undies', 'garter', 'socks', 'shoes', 'pants', 'hand', 'shirt', 'makeup', 'beard', 'hair', 'smile'];
 
 let draggedItem = null;
 let offsetX = 0;
@@ -176,3 +176,4 @@ document.querySelectorAll('.clear-zone').forEach(zone => {
     });
   });
 });
+
