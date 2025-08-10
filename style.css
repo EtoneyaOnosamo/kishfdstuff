@@ -11,7 +11,7 @@ body {
 
 .main-wrapper {
   display: flex;
-  flex-direction: row; /* Важно: чтобы панель была сбоку */
+  flex-direction: row;
   gap: 20px;
   max-width: 100vw;
   max-height: 100vh;
@@ -20,14 +20,16 @@ body {
 
 .items-panel {
   display: flex;
-  flex-direction: column; /* вертикально */
+  flex-direction: column;
   gap: 10px;
   max-height: 90vh;
   overflow-y: auto;
+  padding: 5px;
 }
 
-.items-panel .item {
-  width: 160px;
+.item-preview {
+  width: 80px;
+  height: auto;
   cursor: grab;
 }
 
@@ -63,6 +65,30 @@ body {
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 1;
   touch-action: none;
+}
+
+.clear-zone {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 25%;
+  z-index: 20;
+  cursor: pointer;
+}
+
+.head-zone {
+  top: 0;
+}
+
+.torso-zone {
+  top: 25%;
+}
+
+.legs-zone {
+  top: 50%;
+}
+
+.feet-zone {
+  top: 75%;
 }
