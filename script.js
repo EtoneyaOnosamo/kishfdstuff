@@ -4,67 +4,19 @@ let draggedItem = null;
 let offsetX = 0;
 let offsetY = 0;
 
-const container = document.querySelector('.container');
-
-// --- Для pinch-to-zoom и панорамирования ---
+// Масштаб и перемещение всей сцены
 let scale = 1;
 let startDistance = 0;
-let containerOffsetX = 0;
-let containerOffsetY = 0;
-let containerStartX = 0;
-let containerStartY = 0;
-let isPanning = false;
+let currentX = 0;
+let currentY = 0;
+let lastX = 0;
+let lastY = 0;
+let isDraggingScreen = false;
+let dragStartX = 0;
+let dragStartY = 0;
 
-function getDistance(touches) {
-  const dx = touches[0].clientX - touches[1].clientX;
-  const dy = touches[0].clientY - touches[1].clientY;
-  return Math.sqrt(dx * dx + dy * dy);
-}
+const mainWrapper = document.querySelector('.main-wrapper');
 
-function updateContainerTransform() {
-  container.style.transform = `translate(${containerOffsetX}px, ${containerOffsetY}px) scale(${scale})`;
-}
-
-// --- Слушатели для pinch/pan ---
-document.addEventListener('touchstart', e => {
-  if (e.touches.length === 2) {
-    // Pinch start
-    startDistance = getDistance(e.touches);
-    isPanning = false;
-  } else if (e.touches.length === 1 && scale > 1 && !e.target.classList.contains('item')) {
-    // Начало панорамирования
-    isPanning = true;
-    containerStartX = e.touches[0].clientX - containerOffsetX;
-    containerStartY = e.touches[0].clientY - containerOffsetY;
-  }
-}, { passive: false });
-
-document.addEventListener('touchmove', e => {
-  if (e.touches.length === 2) {
-    e.preventDefault();
-    const newDistance = getDistance(e.touches);
-    const zoomFactor = newDistance / startDistance;
-    container.style.transform = `translate(${containerOffsetX}px, ${containerOffsetY}px) scale(${scale * zoomFactor})`;
-  } else if (isPanning && e.touches.length === 1) {
-    e.preventDefault();
-    containerOffsetX = e.touches[0].clientX - containerStartX;
-    containerOffsetY = e.touches[0].clientY - containerStartY;
-    updateContainerTransform();
-  } else if (draggedItem && e.touches.length === 1) {
-    moveDrag(e.touches[0].clientX, e.touches[0].clientY);
-  }
-}, { passive: false });
-
-document.addEventListener('touchend', e => {
-  if (e.touches.length === 0) {
-    // Завершили pinch
-    const match = container.style.transform.match(/scale\(([^)]+)\)/);
-    if (match) scale = parseFloat(match[1]);
-    isPanning = false;
-  }
-}, { passive: false });
-
-// --- Логика одежды ---
 function isDuplicate(layer) {
   return document.querySelector(`.container .item[data-layer="${layer}"]`) !== null;
 }
@@ -88,7 +40,7 @@ function initDrag(preview) {
     startDrag(preview, e.clientX, e.clientY);
   });
   preview.addEventListener('touchstart', e => {
-    if (e.touches.length > 1) return;
+    if (e.touches.length > 1) return; // Игнор pinch
     startDrag(preview, e.touches[0].clientX, e.touches[0].clientY);
   }, { passive: false });
 }
@@ -105,7 +57,7 @@ function startDrag(preview, clientX, clientY) {
     draggedItem.className = 'item';
     draggedItem.dataset.layer = layer;
 
-    container.appendChild(draggedItem);
+    document.querySelector('.container').appendChild(draggedItem);
     reorderLayers();
     enableRemoval(draggedItem);
     initDrag(draggedItem);
@@ -121,6 +73,7 @@ function startDrag(preview, clientX, clientY) {
 function moveDrag(clientX, clientY) {
   if (!draggedItem) return;
 
+  const container = document.querySelector('.container');
   const rect = container.getBoundingClientRect();
 
   let x = clientX - rect.left - offsetX;
@@ -144,12 +97,68 @@ function reorderLayers() {
   });
 }
 
+// ====================
+//   Pinch-to-zoom логика
+// ====================
+document.addEventListener('touchstart', e => {
+  if (e.target.closest('.item-preview') || e.target.closest('.item')) {
+    return; // если тянем одежду — не зумим экран
+  }
+
+  if (e.touches.length === 2) {
+    startDistance = Math.hypot(
+      e.touches[0].clientX - e.touches[1].clientX,
+      e.touches[0].clientY - e.touches[1].clientY
+    );
+  } else if (e.touches.length === 1) {
+    isDraggingScreen = true;
+    dragStartX = e.touches[0].clientX - lastX;
+    dragStartY = e.touches[0].clientY - lastY;
+  }
+}, { passive: false });
+
+document.addEventListener('touchmove', e => {
+  if (e.target.closest('.item-preview') || e.target.closest('.item')) {
+    if (draggedItem) moveDrag(e.touches[0].clientX, e.touches[0].clientY);
+    return;
+  }
+
+  if (e.touches.length === 2) {
+    e.preventDefault();
+    let newDistance = Math.hypot(
+      e.touches[0].clientX - e.touches[1].clientX,
+      e.touches[0].clientY - e.touches[1].clientY
+    );
+    let zoom = newDistance / startDistance;
+    scale = Math.min(Math.max(0.5, scale * zoom), 3);
+    startDistance = newDistance;
+  } else if (e.touches.length === 1 && isDraggingScreen) {
+    e.preventDefault();
+    currentX = e.touches[0].clientX - dragStartX;
+    currentY = e.touches[0].clientY - dragStartY;
+  }
+
+  mainWrapper.style.transform = `translate(${currentX}px, ${currentY}px) scale(${scale})`;
+}, { passive: false });
+
+document.addEventListener('touchend', e => {
+  if (!draggedItem) {
+    isDraggingScreen = false;
+    lastX = currentX;
+    lastY = currentY;
+  }
+});
+
+// ====================
+//  Слушатели мыши для одежды
+// ====================
 document.addEventListener('mousemove', e => moveDrag(e.clientX, e.clientY));
 document.addEventListener('mouseup', endDrag);
-
 document.querySelectorAll('.item-preview').forEach(initDrag);
 
-// Зоны для снятия одежды
+// ====================
+//  Зоны для снятия одежды
+// ====================
 document.querySelectorAll('.clear-zone').forEach(zone => {
   zone.addEventListener('click', () => {
     const zoneName = zone.dataset.zone;
